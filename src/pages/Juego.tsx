@@ -6,17 +6,17 @@ type Jugador = {
   taps: number;
 };
 
-const DURACION_PRUEBA = 30; // 30s pruebas, luego 86400 (24h real)
+const DURACION_PRUEBA = 30; // 30s pruebas (luego 86400 para 24h real)
 
 const Juego = () => {
-  const [taps, setTaps] = useState(0);
-  const [globalTaps, setGlobalTaps] = useState(1234567);
-  const [jugadoresActivos, setJugadoresActivos] = useState(87);
+  const [taps, setTaps] = useState<number>(0);
+  const [globalTaps, setGlobalTaps] = useState<number>(1234567);
+  const [jugadoresActivos, setJugadoresActivos] = useState<number>(87);
 
-  const [activo, setActivo] = useState(false);
-  const [tiempo, setTiempo] = useState(0);
-  const [mensaje, setMensaje] = useState("👉 Activa tu sesión para empezar");
-  const [tapEffect, setTapEffect] = useState(false);
+  const [activo, setActivo] = useState<boolean>(false);
+  const [tiempo, setTiempo] = useState<number>(0);
+  const [mensaje, setMensaje] = useState<string>("👉 Activa tu sesión para empezar");
+  const [tapEffect, setTapEffect] = useState<boolean>(false);
 
   const [rankingDiario, setRankingDiario] = useState<Jugador[]>([
     { nombre: "Carlos", taps: 230 },
@@ -27,7 +27,7 @@ const Juego = () => {
   ]);
   const [posicion, setPosicion] = useState<number | null>(null);
 
-  // 🔹 Revisar si ya hay sesión guardada
+  // Revisar si ya hay sesión guardada
   useEffect(() => {
     const finGuardado = localStorage.getItem("finSesion");
     const tapsGuardados = localStorage.getItem("tapsSesion");
@@ -46,13 +46,12 @@ const Juego = () => {
     }
   }, []);
 
-  // 🔹 Temporizador persistente
+  // Temporizador persistente
   useEffect(() => {
-let timer: ReturnType<typeof setInterval>;
-
+    let timer: ReturnType<typeof setInterval>;
     if (activo && tiempo > 0) {
       timer = setInterval(() => {
-        setTiempo((t) => {
+        setTiempo((t: number) => {
           if (t <= 1) {
             setActivo(false);
             setMensaje("⏳ ¡Tu sesión terminó!");
@@ -67,7 +66,7 @@ let timer: ReturnType<typeof setInterval>;
     return () => clearInterval(timer);
   }, [activo, tiempo]);
 
-  // 🔹 Activar sesión
+  // Activar sesión
   const activarSesion = () => {
     const fin = Date.now() + DURACION_PRUEBA * 1000;
     localStorage.setItem("finSesion", fin.toString());
@@ -78,23 +77,23 @@ let timer: ReturnType<typeof setInterval>;
     setMensaje("👉 ¡Empieza a tapear!");
   };
 
-  // 🔹 Manejo de TAP
+  // Manejo de TAP
   const handleTap = () => {
     if (!activo) return;
 
     const nuevoTap = taps + 1;
     setTaps(nuevoTap);
-    localStorage.setItem("tapsSesion", nuevoTap.toString()); // 👈 guardamos taps persistentes
-    setGlobalTaps((prev) => prev + 1);
+    localStorage.setItem("tapsSesion", nuevoTap.toString());
+    setGlobalTaps((prev: number) => prev + 1);
 
     if (nuevoTap < 10) setMensaje("🔥 ¡Buen comienzo!");
     else if (nuevoTap < 50) setMensaje("🚀 ¡Vas con ritmo!");
     else if (nuevoTap < 100) setMensaje("💪 ¡Imparable!");
     else setMensaje("👑 ¡Eres una máquina de taps!");
 
-    setRankingDiario((prev) => {
+    setRankingDiario((prev: Jugador[]) => {
       const copia = [...prev];
-      const index = copia.findIndex((j) => j.nombre === "Tú");
+      const index = copia.findIndex((j: Jugador) => j.nombre === "Tú");
 
       if (index >= 0) {
         copia[index].taps = nuevoTap;
@@ -102,21 +101,23 @@ let timer: ReturnType<typeof setInterval>;
         copia.push({ nombre: "Tú", taps: nuevoTap });
       }
 
-      return copia.sort((a, b) => b.taps - a.taps).slice(0, 10);
+      return copia.sort((a: Jugador, b: Jugador) => b.taps - a.taps).slice(0, 10);
     });
 
     setTapEffect(true);
     setTimeout(() => setTapEffect(false), 500);
   };
 
+  // Actualizar posición en ranking
   useEffect(() => {
-    const index = rankingDiario.findIndex((j) => j.nombre === "Tú");
+    const index = rankingDiario.findIndex((j: Jugador) => j.nombre === "Tú");
     if (index >= 0) setPosicion(index + 1);
   }, [rankingDiario]);
 
+  // Simulación de jugadores activos
   useEffect(() => {
     const intervalo = setInterval(() => {
-      setJugadoresActivos((prev) => {
+      setJugadoresActivos((prev: number) => {
         let cambio = Math.floor(Math.random() * 5) - 2;
         let nuevo = prev + cambio;
         if (nuevo < 1) nuevo = 1;
