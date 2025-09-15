@@ -48,7 +48,8 @@ const Juego = () => {
 
   // 🔹 Temporizador persistente
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+let timer: ReturnType<typeof setInterval>;
+
     if (activo && tiempo > 0) {
       timer = setInterval(() => {
         setTiempo((t) => {
