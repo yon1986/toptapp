@@ -11,6 +11,6 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: "./postcss.config.cjs", // 👈 ya no usamos __dirname
+    postcss: "./postcss.config.cjs", // usamos la ruta directa
   },
 });

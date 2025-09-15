@@ -10,7 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node"]   // 👈 necesario para node:url e import.meta.url
   },
   "include": ["src"]
 }
