@@ -6,7 +6,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Juego />} />  {/* 👈 Página única */}
+        <Route path="/" element={<Juego />} />
         <Route path="/ranking" element={<Ranking />} />
       </Routes>
     </BrowserRouter>
