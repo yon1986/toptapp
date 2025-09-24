@@ -1,24 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 🔒 Fix scroll bounce iOS */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none; /* Evita el rebote en navegadores modernos */
+  -webkit-overflow-scrolling: auto; /* Evita el bounce en iOS */
+  overflow-x: hidden; /* Evita scroll horizontal accidental */
+}
+
+/* 🔄 Gradiente animado */
 @keyframes gradient-x {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
 }
-
-.animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 8s ease infinite;
-}
-@keyframes gradient-x {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
 .animate-gradient-x {
   background-size: 200% 200%;
   animation: gradient-x 8s ease infinite;
 }
 
+/* ✨ Animación de +1 */
 @keyframes fade-up {
   0% { opacity: 0; transform: translate(-50%, 20px); }
   50% { opacity: 1; transform: translate(-50%, -10px); }
