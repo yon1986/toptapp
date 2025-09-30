@@ -30,7 +30,7 @@ const Login = () => {
         action="toptapp_login"
         onSuccess={handleSuccess}
       >
-        {({ open }: { open: () => void }) => (
+        {({ open }) => (
           <button
             onClick={open}
             className="bg-gradient-to-r from-yellow-300 to-orange-500 text-black px-6 py-3 rounded-xl text-lg font-bold shadow-lg hover:scale-105 transition-transform"
