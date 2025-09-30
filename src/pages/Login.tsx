@@ -2,7 +2,7 @@ import { IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
 import { useNavigate } from "react-router-dom";
 
 const app_id = import.meta.env.VITE_WORLD_ID_APP_ID || "tu_app_id"; 
-// ⚠️ cambia "tu_app_id" por el que obtienes en https://developer.worldcoin.org
+// ⚠️ cambia "tu_app_id" por el que te da https://developer.worldcoin.org
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,7 +10,10 @@ const Login = () => {
   const handleSuccess = (result: ISuccessResult) => {
     console.log("✅ Login exitoso con World ID:", result);
 
-    // Guardamos datos mínimos del usuario (ej: nullifier_hash único)
+    // Guardamos el identificador único del usuario (nullifier_hash)
+    localStorage.setItem("playerName", result.nullifier_hash);
+
+    // También guardamos todo el objeto por si lo necesitas después
     localStorage.setItem("worldID", JSON.stringify(result));
 
     // Redirigimos al juego
@@ -26,9 +29,8 @@ const Login = () => {
         app_id={app_id}
         action="toptapp_login"
         onSuccess={handleSuccess}
-        enableTelemetry
       >
-        {({ open }) => (
+        {({ open }: { open: () => void }) => (
           <button
             onClick={open}
             className="bg-gradient-to-r from-yellow-300 to-orange-500 text-black px-6 py-3 rounded-xl text-lg font-bold shadow-lg hover:scale-105 transition-transform"
