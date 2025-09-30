@@ -3,23 +3,30 @@ import { useNavigate } from "react-router-dom";
 
 const app_id = import.meta.env.VITE_WORLD_ID_APP_ID as string;
 
+// 👇 LOG TEMPORAL para verificar en consola si Vercel está cargando la variable
+console.log("APP ID en frontend:", app_id);
+
 const Login = () => {
   const navigate = useNavigate();
 
   const handleSuccess = (result: ISuccessResult) => {
-    // guarda identidad mínima
+    console.log("✅ Login exitoso con World ID:", result);
+
+    // Guardar identidad mínima
     localStorage.setItem("playerName", result.nullifier_hash);
     localStorage.setItem("worldID", JSON.stringify(result));
-    // al juego
+
+    // Ir al juego
     navigate("/");
   };
 
-  // si falta la variable, muestra algo claro (no rompe build)
   if (!app_id) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-white bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600">
         <h1 className="text-3xl font-bold mb-4">TopTApp</h1>
-        <p className="opacity-90">Falta la variable VITE_WORLD_ID_APP_ID en el archivo .env</p>
+        <p className="opacity-90">
+          ⚠️ Falta la variable VITE_WORLD_ID_APP_ID en el archivo .env o en Vercel
+        </p>
       </div>
     );
   }
