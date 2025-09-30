@@ -6,7 +6,8 @@ type Jugador = {
   taps: number;
 };
 
-const DURACION_PRUEBA = 30; // 30s pruebas (luego 86400 para 24h real)
+// ⚠️ Cambiar a 86400 (24h reales) cuando ya no sea prueba
+const DURACION_PRUEBA = 86400; // 24h en segundos
 
 const Juego = () => {
   const [taps, setTaps] = useState<number>(0);
@@ -66,8 +67,14 @@ const Juego = () => {
     return () => clearInterval(timer);
   }, [activo, tiempo]);
 
-  // Activar sesión
+  // Activar sesión (revisar login)
   const activarSesion = () => {
+    const user = localStorage.getItem("worldID");
+    if (!user) {
+      alert("⚠️ Debes iniciar sesión con World ID para jugar.");
+      return;
+    }
+
     const fin = Date.now() + DURACION_PRUEBA * 1000;
     localStorage.setItem("finSesion", fin.toString());
     localStorage.setItem("tapsSesion", "0");
@@ -186,7 +193,7 @@ const Juego = () => {
           onClick={activarSesion}
           className="mt-6 bg-gradient-to-r from-green-400 to-green-600 text-black px-5 py-2 rounded-full text-lg font-bold shadow-lg hover:scale-105 transition-transform"
         >
-          ✅ Activar 30s ilimitado (Prueba)
+          ✅ Activar 24h ilimitado
         </button>
       )}
 
