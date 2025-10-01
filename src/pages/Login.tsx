@@ -1,3 +1,4 @@
+// src/pages/Login.tsx
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MiniKit } from "@worldcoin/minikit-js";
@@ -10,7 +11,6 @@ function Login() {
   const [msg, setMsg] = useState<string | null>(null);
 
   const openInWorldApp = () => {
-    // Deep link para abrir TopTApp dentro de World App
     const path = encodeURIComponent("/login");
     const url = `worldapp://mini-app?app_id=${APP_ID}&path=${path}`;
     window.location.href = url;
@@ -20,18 +20,24 @@ function Login() {
     setMsg(null);
     setLoading(true);
     try {
+      // 🔹 1) Si no está en World App → simular login
       if (!MiniKit.isInstalled()) {
-        setMsg("⚠️ Abre esta miniapp dentro de World App.");
-        setLoading(false);
+        console.warn("Simulación de login (modo Draft)");
+        const fakeUser = {
+          ok: true,
+          address: "0xFAKE1234567890",
+        };
+        localStorage.setItem("worldID", JSON.stringify(fakeUser));
+        localStorage.setItem("playerName", "UsuarioSimulado");
+        nav("/", { replace: true });
         return;
       }
 
-      // 1) Pide nonce a tu backend
+      // 🔹 2) Si está en World App → flujo real de WalletAuth
       const nonceRes = await fetch("/api/nonce");
       if (!nonceRes.ok) throw new Error("No se pudo generar nonce");
       const { nonce } = await nonceRes.json();
 
-      // 2) Solicita Wallet Auth
       const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
         nonce,
         statement: "Inicia sesión en TopTApp para jugar y registrar tu progreso.",
@@ -43,7 +49,6 @@ function Login() {
         throw new Error("Firma cancelada o inválida.");
       }
 
-      // 3) Verifica en backend
       const verifyRes = await fetch("/api/complete-siwe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,11 +60,9 @@ function Login() {
         throw new Error("Verificación SIWE fallida.");
       }
 
-      // 4) Guardar sesión en localStorage
       localStorage.setItem("worldID", JSON.stringify(verifyJson));
       localStorage.setItem("playerName", verifyJson.address);
 
-      // 5) Ir al juego
       nav("/", { replace: true });
     } catch (e: any) {
       console.error(e);
@@ -79,7 +82,7 @@ function Login() {
         onClick={signIn}
         className="bg-gradient-to-r from-yellow-300 to-orange-500 text-black px-6 py-3 rounded-xl text-lg font-bold shadow-lg hover:scale-105 transition-transform"
       >
-        {loading ? "Firmando en World App..." : "🌍 Iniciar con World App"}
+        {loading ? "Conectando..." : "🌍 Iniciar con World App"}
       </button>
 
       {!MiniKit.isInstalled() && (
