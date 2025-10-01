@@ -4,7 +4,7 @@ import { MiniKit } from "@worldcoin/minikit-js";
 
 const APP_ID = import.meta.env.VITE_WORLD_APP_ID as string;
 
-const Login = () => {
+function Login() {
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -26,12 +26,12 @@ const Login = () => {
         return;
       }
 
-      // 1. Pide nonce a tu backend
+      // 1) Pide nonce a tu backend
       const nonceRes = await fetch("/api/nonce");
       if (!nonceRes.ok) throw new Error("No se pudo generar nonce");
       const { nonce } = await nonceRes.json();
 
-      // 2. Solicita Wallet Auth a World App
+      // 2) Solicita Wallet Auth
       const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
         nonce,
         statement: "Inicia sesión en TopTApp para jugar y registrar tu progreso.",
@@ -43,7 +43,7 @@ const Login = () => {
         throw new Error("Firma cancelada o inválida.");
       }
 
-      // 3. Verifica en backend
+      // 3) Verifica en backend
       const verifyRes = await fetch("/api/complete-siwe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,11 +55,11 @@ const Login = () => {
         throw new Error("Verificación SIWE fallida.");
       }
 
-      // 4. Guardar sesión en localStorage
+      // 4) Guardar sesión en localStorage
       localStorage.setItem("worldID", JSON.stringify(verifyJson));
       localStorage.setItem("playerName", verifyJson.address);
 
-      // 5. Navegar al juego
+      // 5) Ir al juego
       nav("/", { replace: true });
     } catch (e: any) {
       console.error(e);
@@ -94,6 +94,6 @@ const Login = () => {
       {msg && <p className="mt-4 text-red-400">{msg}</p>}
     </div>
   );
-};
+}
 
 export default Login;
