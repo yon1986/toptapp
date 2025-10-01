@@ -10,7 +10,7 @@ const Login = () => {
   const [msg, setMsg] = useState<string | null>(null);
 
   const openInWorldApp = () => {
-    // Deep link para abrir dentro de World App
+    // Deep link para abrir TopTApp dentro de World App
     const path = encodeURIComponent("/login");
     const url = `worldapp://mini-app?app_id=${APP_ID}&path=${path}`;
     window.location.href = url;
@@ -26,12 +26,12 @@ const Login = () => {
         return;
       }
 
-      // 1) Pide nonce a tu backend
+      // 1. Pide nonce a tu backend
       const nonceRes = await fetch("/api/nonce");
       if (!nonceRes.ok) throw new Error("No se pudo generar nonce");
       const { nonce } = await nonceRes.json();
 
-      // 2) Wallet Authentication
+      // 2. Solicita Wallet Auth a World App
       const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
         nonce,
         statement: "Inicia sesión en TopTApp para jugar y registrar tu progreso.",
@@ -43,7 +43,7 @@ const Login = () => {
         throw new Error("Firma cancelada o inválida.");
       }
 
-      // 3) Verifica en backend
+      // 3. Verifica en backend
       const verifyRes = await fetch("/api/complete-siwe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,11 +55,11 @@ const Login = () => {
         throw new Error("Verificación SIWE fallida.");
       }
 
-      // 4) Guardar en localStorage
+      // 4. Guardar sesión en localStorage
       localStorage.setItem("worldID", JSON.stringify(verifyJson));
       localStorage.setItem("playerName", verifyJson.address);
 
-      // Ir al juego
+      // 5. Navegar al juego
       nav("/", { replace: true });
     } catch (e: any) {
       console.error(e);
