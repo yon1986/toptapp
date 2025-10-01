@@ -4,14 +4,20 @@ import Ranking from "./pages/Ranking";
 import Login from "./pages/Login";
 
 function App() {
-  // Revisa si hay sesión guardada (wallet autenticada)
+  // Revisa si hay sesión guardada (wallet autenticada o simulada)
   const isLoggedIn = (() => {
     try {
       const data = localStorage.getItem("worldID");
       if (!data) return false;
       const parsed = JSON.parse(data);
-      // Validamos que exista la dirección del usuario
-      return !!parsed.address;
+
+      // Si existe address (real o fake), está logueado
+      if (parsed.address) return true;
+
+      // Para compatibilidad: si simulamos guardando playerName
+      if (localStorage.getItem("playerName")) return true;
+
+      return false;
     } catch {
       return false;
     }
